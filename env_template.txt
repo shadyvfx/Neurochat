@@ -1,0 +1,15 @@
+# OpenAI API Configuration
+# Get your API key from: https://platform.openai.com/api-keys
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Message Encryption
+# This key will be auto-generated on first run, but you can set your own
+ENCRYPTION_KEY=your_encryption_key_here
+
+# Flask Configuration
+SECRET_KEY=your_secret_key_here
+FLASK_ENV=development
+DEBUG=True
+
+# CSRF Protection
+WTF_CSRF_ENABLED=True

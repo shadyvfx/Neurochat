@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<title>Neurochat</title>
+</head>
+<body>
+
+<div class="nav">
+        <h1>Neurochat</h1>
+</div>
+
+<!-- Right Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <img src="{{ url_for('static', filename='wink-smile.png') }}" alt="Wink Smile" class="sidebar-icon">
+    </div>
+    
+    <div class="sidebar-content">
+        <div class="theme-switch">
+            <label class="switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="slider round"></span>
+            </label>
+            <span class="switch-label">Dark Mode</span>
+        </div>
+        
+        <button class="logout-btn" onclick="logout()">
+            <i class='bx bx-log-out'></i>
+        </button>
+    </div>
+</div>
+
+<div id="modalOverlay" class="modal">
+    <div class="modal-content">
+      <span class="close-button" onclick="closePopup()">&times;</span>
+      <iframe id="modalIframe" src="" frameborder="0" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+</div>
+
+<!-- Chat Interface with proper IDs for JavaScript -->
+<div class="centered">
+    <textarea id="messageInput" maxlength="2000" placeholder="What's on your mind?" disabled></textarea>
+    <p id="warning">Neurochat's here to listen, not to diagnose. For serious help, talk to a licensed professional.</p>
+</div>
+
+<div class="container">
+    <div class="window" id="chatWindow">
+        <!-- AI welcome message will appear here automatically -->
+    </div>
+    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+        <div class="typing-bubble">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Controls -->
+<!-- Load JavaScript at the end of body -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<script>
+// Additional functions for dashboard
+async function logout() {
+    try {
+        const response = await fetch('/auth/logout');
+        if (response.ok) {
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error('Error logging out:', error);
+    }
+}
+</script>
+
+</body>
+</html>

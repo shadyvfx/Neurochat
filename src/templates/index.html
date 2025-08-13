@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>Neurochat</title>
+</head>
+<body class="index-page">
+
+    <div class="nav">
+            <h1>Neurochat</h1>
+        <div class="login">
+            <h1 id="signin"><a href="javascript:void(0);" onclick="openPopup('{{ url_for('auth.login') }}')">Log In</a></h1>
+            <h1 id="slash">/</h1>
+            <h1 id="signup"><a href="javascript:void(0);" onclick="openPopup('{{ url_for('auth.signup') }}')">Register</a></h1>
+        </div>
+    </div>
+    
+    <div id="modalOverlay" class="modal">
+        <div class="modal-content">
+          <span class="close-button" onclick="closePopup()">&times;</span>
+          <iframe id="modalIframe" src="" frameborder="0" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
+    </div>
+        
+    <div class="centered">
+        <textarea id="messageInput" maxlength="2000" placeholder="What's on your mind?" disabled></textarea>
+        <p id="warning">Neurochat's here to listen, not to diagnose. For serious help, talk to a licensed professional.</p>
+    </div>
+    
+    <div class="container">
+        <div class="window" id="chatWindow">
+            <!-- AI welcome message will appear here automatically -->
+        </div>
+        <div class="typing-indicator" id="typingIndicator" style="display: none;">
+            <div class="typing-bubble">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load JavaScript at the end of body -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    
+    <script>
+    // Guest timer functionality (hidden - no visible timer)
+    let guestTimerInterval;
+    let guestExpired = {% if guest_expired %}true{% else %}false{% endif %};
+
+    // Initialize guest timer (hidden)
+    function initGuestTimer() {
+        if (guestExpired) {
+            showGuestExpired();
+            return;
+        }
+        
+        // Start countdown (hidden)
+        updateGuestTimer();
+        guestTimerInterval = setInterval(updateGuestTimer, 1000);
+    }
+
+    // Update guest timer (hidden)
+    async function updateGuestTimer() {
+        try {
+            const response = await fetch('/guest/status');
+            const data = await response.json();
+            
+            if (data.expired) {
+                clearInterval(guestTimerInterval);
+                showGuestExpired();
+                return;
+            }
+            
+            // Timer is hidden, but still tracks time
+            // When time runs out, it will disable chat
+            
+        } catch (error) {
+            console.error('Error updating guest timer:', error);
+        }
+    }
+
+    // Show guest expired message
+    function showGuestExpired() {
+        // Disable chat input
+        document.getElementById('messageInput').disabled = true;
+        document.getElementById('messageInput').placeholder = 'Create account to continue chatting';
+        
+        // Add message to chat that time has expired
+        addMessage('ai', "⏰ Your 15-minute guest session has expired. Please create a free account to continue chatting with Neurochat!");
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize hidden guest timer
+        initGuestTimer();
+    });
+    </script>
+    
+    </body>
+</html>
