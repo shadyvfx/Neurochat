@@ -1,5 +1,6 @@
 import os
 from flask import request, jsonify, render_template, session, current_app
+from flask_login import login_user, logout_user, login_required, current_user
 from .models import db, User
 from . import auth
 import openai
@@ -114,6 +115,15 @@ def login():
             print("Invalid credentials")
             return jsonify({"error": "Invalid email or password"}), 401
 
+        # Clear guest session variables and set up user authentication
+        session.pop('guest_start_time', None)
+        session.pop('guest_mode', None)
+        session.pop('guest_expired', None)
+        session.pop('guest_expired_notified', None)
+        
+        # Log in the user with Flask-Login
+        login_user(user)
+        
         print("Login successful")
         return jsonify({
             "message": "Login successful",
@@ -189,8 +199,18 @@ def signup():
         db.session.commit()
         print("✅ User committed to database")
         
-        print("User created successfully")
-        return jsonify({"message": "Account created successfully"}), 201
+        # Automatically log in the user after successful signup
+        login_user(new_user)
+        
+        print("User created and logged in successfully")
+        return jsonify({
+            "message": "Account created successfully",
+            "user": {
+                "id": new_user.id,
+                "first_name": new_user.first_name,
+                "email": new_user.email
+            }
+        }), 201
     
     except Exception as e:
         print(f"Signup error: {e}")
@@ -275,6 +295,7 @@ def start_chat():
 @auth.route('/logout')
 def logout():
     """Logout user and clear session"""
+    logout_user()
     session.clear()
     return jsonify({"message": "Logged out successfully"}), 200
 
@@ -330,8 +351,12 @@ def chat_message():
     if not user_message:
         return jsonify({"error": "Message cannot be empty"}), 400
     
-    # Check if user is guest and time has expired
-    if session.get('guest_mode') == 'guest':
+    # Check if user is authenticated first
+    if current_user.is_authenticated:
+        # User is logged in, proceed with chat
+        pass
+    elif session.get('guest_mode') == 'guest':
+        # Check if guest time has expired
         guest_elapsed = time.time() - session.get('guest_start_time', 0)
         if guest_elapsed > 900:  # 15 minutes
             # Add expiration message to chat history
@@ -350,6 +375,9 @@ def chat_message():
                 "expired": True,
                 "guest_expired": True
             }), 200
+    else:
+        # Neither authenticated nor guest
+        return jsonify({"error": "Please log in or start a guest session"}), 401
     
     mode = session.get('chat_mode')
     if not mode:

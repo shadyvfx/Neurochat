@@ -21,7 +21,7 @@
 <!-- Right Sidebar -->
 <div class="sidebar">
     <div class="sidebar-header">
-        <img src="{{ url_for('static', filename='wink-smile.png') }}" alt="Wink Smile" class="sidebar-icon">
+        <!-- <img src="{{ url_for('static', filename='wink-smile.png') }}" alt="Wink Smile" class="sidebar-icon"> -->
     </div>
     
     <div class="sidebar-content">
@@ -48,7 +48,7 @@
 
 <!-- Chat Interface with proper IDs for JavaScript -->
 <div class="centered">
-    <textarea id="messageInput" maxlength="2000" placeholder="What's on your mind?" disabled></textarea>
+    <textarea id="messageInput" maxlength="2000" placeholder="What's on your mind?"></textarea>
     <p id="warning">Neurochat's here to listen, not to diagnose. For serious help, talk to a licensed professional.</p>
 </div>
 
@@ -65,23 +65,8 @@
     </div>
 </div>
 
-<!-- Chat Controls -->
-<!-- Load JavaScript at the end of body -->
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
-
-<script>
-// Additional functions for dashboard
-async function logout() {
-    try {
-        const response = await fetch('/auth/logout');
-        if (response.ok) {
-            window.location.href = '/';
-        }
-    } catch (error) {
-        console.error('Error logging out:', error);
-    }
-}
-</script>
+<!-- Load dashboard-specific JavaScript -->
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
 </body>
 </html>

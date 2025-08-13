@@ -51,43 +51,7 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     
     <script>
-    // Guest timer functionality (hidden - no visible timer)
-    let guestTimerInterval;
-    let guestExpired = {% if guest_expired %}true{% else %}false{% endif %};
-
-    // Initialize guest timer (hidden)
-    function initGuestTimer() {
-        if (guestExpired) {
-            showGuestExpired();
-            return;
-        }
-        
-        // Start countdown (hidden)
-        updateGuestTimer();
-        guestTimerInterval = setInterval(updateGuestTimer, 1000);
-    }
-
-    // Update guest timer (hidden)
-    async function updateGuestTimer() {
-        try {
-            const response = await fetch('/guest/status');
-            const data = await response.json();
-            
-            if (data.expired) {
-                clearInterval(guestTimerInterval);
-                showGuestExpired();
-                return;
-            }
-            
-            // Timer is hidden, but still tracks time
-            // When time runs out, it will disable chat
-            
-        } catch (error) {
-            console.error('Error updating guest timer:', error);
-        }
-    }
-
-    // Show guest expired message
+    // Guest expired message display
     function showGuestExpired() {
         // Disable chat input
         document.getElementById('messageInput').disabled = true;
@@ -96,12 +60,6 @@
         // Add message to chat that time has expired
         addMessage('ai', "⏰ Your 15-minute guest session has expired. Please create a free account to continue chatting with Neurochat!");
     }
-
-    // Initialize when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize hidden guest timer
-        initGuestTimer();
-    });
     </script>
     
     </body>

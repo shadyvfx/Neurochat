@@ -1,4 +1,15 @@
-// Modal popup functions for login/signup
+// Dashboard-specific chat functionality
+let currentMode = null;
+let awaitingModeSelection = true;
+let chatInitialized = false;
+
+// Get CSRF token function
+function getCSRFToken() {
+    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+    return csrfMeta ? csrfMeta.getAttribute('content') : null;
+}
+
+// Modal popup functions
 function openPopup(page) {
     const modal = document.getElementById("modalOverlay");
     const iframe = document.getElementById("modalIframe");
@@ -21,59 +32,12 @@ function closePopup() {
     document.body.style.overflow = '';
 }
 
-// Listen for messages from iframe (login success)
-window.addEventListener('message', function(event) {
-    if (event.data && event.data.action === 'redirect') {
-        closePopup(); // Close the popup first
-        window.location.replace(event.data.url); // Then redirect main window
-    }
-});
-
-// Chat functionality for index page
-let currentMode = null;
-let awaitingModeSelection = true;
-let chatInitialized = false;
-let isAuthenticated = false;
-
-// Get CSRF token function
-function getCSRFToken() {
-    const csrfMeta = document.querySelector('meta[name="csrf-token"]');
-    return csrfMeta ? csrfMeta.getAttribute('content') : null;
-}
-
-// Check authentication status
-async function checkAuthStatus() {
-    try {
-        const response = await fetch('/guest/status');
-        const data = await response.json();
-        
-        if (data.authenticated) {
-            isAuthenticated = true;
-            // User is authenticated, redirect to dashboard
-            window.location.href = '/dashboard';
-            return;
-        }
-        
-        // User is not authenticated, continue with guest mode
-        isAuthenticated = false;
-    } catch (error) {
-        console.error('Error checking auth status:', error);
-        isAuthenticated = false;
-    }
-}
-
-// Initialize chat when page loads (only on index page)
+// Initialize chat for authenticated users
 window.addEventListener('DOMContentLoaded', function() {
-    // Check if we're on the index page (has chatWindow element)
     if (document.getElementById('chatWindow')) {
-        // Check authentication status first
-        checkAuthStatus().then(() => {
-            if (!isAuthenticated) {
-                setTimeout(() => {
-                    showWelcomeMessage();
-                }, 1000); // Small delay for natural feel
-            }
-        });
+        setTimeout(() => {
+            showWelcomeMessage();
+        }, 1000);
     }
 });
 
@@ -91,7 +55,7 @@ function showWelcomeMessage() {
             messageInput.placeholder = "Type 'listen' or 'talk' to continue...";
             messageInput.focus();
         }
-    }, 2000); // 2 second typing delay
+    }, 2000);
 }
 
 async function sendMessage() {
@@ -176,13 +140,6 @@ async function handleChatMessage(message) {
     try {
         console.log('handleChatMessage called with:', message);
         
-        // Check if user is authenticated
-        if (isAuthenticated) {
-            // User is authenticated, proceed with chat
-            await sendAuthenticatedMessage(message);
-            return;
-        }
-        
         // Show typing indicator immediately
         console.log('About to show typing indicator...');
         showTypingIndicator();
@@ -213,54 +170,10 @@ async function handleChatMessage(message) {
                 addMessage('ai', data.message);
             }, 500); // 0.5 second delay after typing stops
         } else {
-            // Check if it's a guest time expiration error
-            if (response.status === 403 && data.expired) {
-                hideTypingIndicator();
-                addMessage('ai', data.message);
-                // Show the expired message overlay
-                if (typeof showGuestExpired === 'function') {
-                    showGuestExpired();
-                }
-            } else {
-                throw new Error(data.error || 'Failed to send message');
-            }
-        }
-    } catch (error) {
-        console.error('Error sending message:', error);
-        hideTypingIndicator();
-        addMessage('ai', "I apologize, but I'm having trouble responding right now. Please try again.");
-    }
-}
-
-// Function to send messages for authenticated users
-async function sendAuthenticatedMessage(message) {
-    try {
-        showTypingIndicator();
-        
-        const headers = { 'Content-Type': 'application/json' };
-        const csrfToken = getCSRFToken();
-        if (csrfToken) {
-            headers['X-CSRFToken'] = csrfToken;
-        }
-        
-        const response = await fetch('/auth/chat/message', {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({ message: message })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            hideTypingIndicator();
-            setTimeout(() => {
-                addMessage('ai', data.message);
-            }, 500);
-        } else {
             throw new Error(data.error || 'Failed to send message');
         }
     } catch (error) {
-        console.error('Error sending authenticated message:', error);
+        console.error('Error sending message:', error);
         hideTypingIndicator();
         addMessage('ai', "I apologize, but I'm having trouble responding right now. Please try again.");
     }
@@ -346,7 +259,7 @@ function hideTypingIndicator() {
 
 // Initialize event listeners when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle Enter key in textarea (only if messageInput exists)
+    // Handle Enter key in textarea
     const messageInput = document.getElementById('messageInput');
     if (messageInput) {
         messageInput.addEventListener('keydown', function(e) {
@@ -364,9 +277,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function logout() {
-    // Redirect to index.html
-    window.location.href = 'index.html';
+// Logout function for dashboard
+async function logout() {
+    try {
+        const response = await fetch('/auth/logout');
+        if (response.ok) {
+            window.location.href = '/';
+        }
+    } catch (error) {
+        console.error('Error logging out:', error);
+    }
 }
 
 // Theme toggle functionality
@@ -374,29 +294,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const themeToggle = document.getElementById('themeToggle');
     const switchLabel = document.querySelector('.switch-label');
     
-    // Check for saved theme preference or default to dark
-    const currentTheme = localStorage.getItem('theme') || 'dark';
-    document.body.className = currentTheme;
-    
-    // Set toggle state based on current theme
-    if (currentTheme === 'light') {
-        themeToggle.checked = true;
-        switchLabel.textContent = 'Light Mode';
-    } else {
-        themeToggle.checked = false;
-        switchLabel.textContent = 'Dark Mode';
-    }
-    
-    // Theme toggle event listener
-    themeToggle.addEventListener('change', function() {
-        if (this.checked) {
-            document.body.className = 'light';
-            localStorage.setItem('theme', 'light');
+    if (themeToggle && switchLabel) {
+        // Check for saved theme preference or default to dark
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        document.body.className = currentTheme;
+        
+        // Set toggle state based on current theme
+        if (currentTheme === 'light') {
+            themeToggle.checked = true;
             switchLabel.textContent = 'Light Mode';
         } else {
-            document.body.className = 'dark';
-            localStorage.setItem('theme', 'dark');
+            themeToggle.checked = false;
             switchLabel.textContent = 'Dark Mode';
         }
-    });
+        
+        // Theme toggle event listener
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.className = 'light';
+                localStorage.setItem('theme', 'light');
+                switchLabel.textContent = 'Light Mode';
+            } else {
+                document.body.className = 'dark';
+                localStorage.setItem('theme', 'dark');
+                switchLabel.textContent = 'Dark Mode';
+            }
+        });
+    }
 });

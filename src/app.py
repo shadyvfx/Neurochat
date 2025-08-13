@@ -1,7 +1,7 @@
 import os
-from flask import Flask, render_template, session, jsonify
+from flask import Flask, render_template, session, jsonify, redirect, url_for
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager
+from flask_login import LoginManager, login_required, current_user
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from decouple import config as env_config
@@ -41,49 +41,20 @@ def create_app(config_name=None):
     # Main routes
     @app.route('/')
     def index():
+        # Check if user is already authenticated
+        if current_user.is_authenticated:
+            return redirect(url_for('dashboard'))
+        
         # Always start fresh guest session when server loads
         session['guest_start_time'] = time.time()
         session['guest_mode'] = 'guest'
         session['conversation_history'] = []
         session['guest_expired_notified'] = False
         
-        # Check if guest time has expired (15 minutes = 900 seconds)
-        guest_elapsed = time.time() - session.get('guest_start_time', 0)
-        if guest_elapsed > 900:  # 15 minutes
-            session['guest_expired'] = True
-            return render_template('index.html', guest_expired=True)
-        
-        return render_template('index.html', guest_expired=False)
-    
-    @app.route('/guest/status', methods=['GET'])
-    def guest_status():
-        """Get guest session status and remaining time"""
-        if 'guest_start_time' not in session:
-            return jsonify({"error": "No guest session"}), 400
-        
-        current_time = time.time()
-        elapsed = current_time - session.get('guest_start_time', 0)
-        remaining = max(0, 900 - elapsed)  # 15 minutes = 900 seconds
-        
-        # Check if expired
-        if remaining <= 0 and not session.get('guest_expired_notified', False):
-            # Add expiration message to chat history
-            if 'conversation_history' in session:
-                session['conversation_history'].append({
-                    'role': 'ai',
-                    'content': 'Your 15-minute guest session has expired. Please create a free account to continue chatting.',
-                    'timestamp': current_time
-                })
-            session['guest_expired_notified'] = True
-        
-        return jsonify({
-            "guest_mode": session.get('guest_mode', False),
-            "remaining_time": remaining,
-            "expired": remaining <= 0,
-            "expired_notified": session.get('guest_expired_notified', False)
-        })
+        return render_template('index.html')
     
     @app.route('/dashboard')
+    @login_required
     def dashboard():
         """Dashboard route accessible after login/signup"""
         return render_template('dashboard.html')
