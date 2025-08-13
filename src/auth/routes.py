@@ -402,14 +402,24 @@ def generate_listening_response(user_message, history):
         # Method 1: Try config function
         try:
             api_key = config('OPENAI_API_KEY', default=None)
-            print(f"Listen Mode - Method 1 (config): {api_key[:20] if api_key else 'None'}...")
+            if api_key:
+                # Clean the key - remove any line breaks or extra whitespace
+                api_key = api_key.strip().replace('\n', '').replace('\r', '')
+                print(f"Listen Mode - Method 1 (config): {api_key[:20]}... (length: {len(api_key)})")
+            else:
+                print("Listen Mode - Method 1 (config): No key found")
         except Exception as e:
             print(f"Listen Mode - Method 1 failed: {e}")
         
         # Method 2: Try direct environment variable
         if not api_key:
             api_key = os.environ.get('OPENAI_API_KEY')
-            print(f"Listen Mode - Method 2 (os.environ): {api_key[:20] if api_key else 'None'}...")
+            if api_key:
+                # Clean the key - remove any line breaks or extra whitespace
+                api_key = api_key.strip().replace('\n', '').replace('\r', '')
+                print(f"Listen Mode - Method 2 (os.environ): {api_key[:20]}... (length: {len(api_key)})")
+            else:
+                print("Listen Mode - Method 2 (os.environ): No key found")
         
         # Method 3: Try loading from .env file manually
         if not api_key:
@@ -471,7 +481,8 @@ def generate_listening_response(user_message, history):
         
         if not api_key:
             print("Listen Mode - No API key found after all methods, returning fallback")
-            return "I'm here to listen and support you. (Note: OpenAI API key not configured - please add OPENAI_API_KEY to your .env file)"
+            print("Listen Mode - Make sure OPENAI_API_KEY is set in your environment variables")
+            return "I'm here to listen and support you. (Note: OpenAI API key not configured - please add OPENAI_API_KEY to your environment variables)"
         
         # Initialize OpenAI client
         client = OpenAI(api_key=api_key)
@@ -547,14 +558,24 @@ def generate_active_response(user_message, history):
         # Method 1: Try config function
         try:
             api_key = config('OPENAI_API_KEY', default=None)
-            print(f"Active Mode - Method 1 (config): {api_key[:20] if api_key else 'None'}...")
+            if api_key:
+                # Clean the key - remove any line breaks or extra whitespace
+                api_key = api_key.strip().replace('\n', '').replace('\r', '')
+                print(f"Active Mode - Method 1 (config): {api_key[:20]}... (length: {len(api_key)})")
+            else:
+                print("Active Mode - Method 1 (config): No key found")
         except Exception as e:
             print(f"Active Mode - Method 1 failed: {e}")
         
         # Method 2: Try direct environment variable
         if not api_key:
             api_key = os.environ.get('OPENAI_API_KEY')
-            print(f"Active Mode - Method 2 (os.environ): {api_key[:20] if api_key else 'None'}...")
+            if api_key:
+                # Clean the key - remove any line breaks or extra whitespace
+                api_key = api_key.strip().replace('\n', '').replace('\r', '')
+                print(f"Active Mode - Method 2 (os.environ): {api_key[:20]}... (length: {len(api_key)})")
+            else:
+                print("Active Mode - Method 2 (os.environ): No key found")
         
         # Method 3: Try loading from .env file manually
         if not api_key:
@@ -616,7 +637,8 @@ def generate_active_response(user_message, history):
         
         if not api_key:
             print("Active Mode - No API key found after all methods, returning fallback")
-            return "I'm here to chat with you! What's on your mind? (Note: OpenAI API key not configured - please add OPENAI_API_KEY to your .env file)"
+            print("Active Mode - Make sure OPENAI_API_KEY is set in your environment variables")
+            return "I'm here to chat with you! What's on your mind? (Note: OpenAI API key not configured - please add OPENAI_API_KEY to your environment variables)"
         
         # Initialize OpenAI client
         client = OpenAI(api_key=api_key)
