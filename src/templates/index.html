@@ -8,11 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>Neurochat</title>
 </head>
-<body class="index-page">
-
+<body class="guest">
     <div class="nav">
             <h1>Neurochat</h1>
         <div class="login">
@@ -21,6 +21,22 @@
             <h1 id="signup"><a href="javascript:void(0);" onclick="openPopup('{{ url_for('auth.signup') }}')">Register</a></h1>
         </div>
     </div>
+
+    <label for="kofi-toggle" class="donate">Support Us!</label>
+        <input type="checkbox" id="kofi-toggle" hidden>
+        <!-- Popup modal -->
+        <div class="popup">
+            <div class="popup-content">
+            <!-- Close button -->
+            <label for="kofi-toggle" class="close-btn">&times;</label>
+            <!-- Ko-fi iframe -->
+            <iframe id="kofiframe" 
+            src="https://ko-fi.com/neurochat/?hidefeed=true&widget=true&embed=true&preview=true"
+            style="border:none;width:100%;background:#f9f9f9;" 
+            height="580" title="neurochat">
+            </iframe>
+            </div>
+        </div>
     
     <div id="modalOverlay" class="modal">
         <div class="modal-content">
@@ -32,6 +48,7 @@
     <div class="centered">
         <textarea id="messageInput" maxlength="2000" placeholder="What's on your mind?" disabled></textarea>
         <p id="warning">Neurochat's here to listen, not to diagnose. For serious help, talk to a licensed professional.</p>
+        
     </div>
     
     <div class="container">

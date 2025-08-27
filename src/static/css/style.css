@@ -41,6 +41,7 @@ body.light textarea::placeholder {
 
 body.light #warning {
     color: #666;
+    text-align: center;
 }
 
 :root {
@@ -149,7 +150,7 @@ body.index-page .login {
     visibility: hidden;
     opacity: 0;
     position: fixed;
-    z-index: 1000;
+    z-index: 9998;
     top: 0; left: 0;
     width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0);
@@ -178,6 +179,7 @@ body.index-page .login {
     transform: translateY(30px);
     opacity: 0;
     transition: transform 0.8s ease, opacity 0.4s ease;
+    z-index: 9999;
 }
 
 .modal.show .modal-content {
@@ -364,6 +366,7 @@ textarea::placeholder {
     font-size: 16px;
     display: flex;
     user-select: none;
+    text-align: center;
 }
 
 /* Right Sidebar Styles */
@@ -391,7 +394,16 @@ textarea::placeholder {
 .sidebar-icon {
     width: 60px;
     height: 60px;
-    object-fit: contain;
+    object-fit: cover;
+    align-items: center;
+    filter: brightness(0) invert(1);
+    transition: filter 0.3s ease;
+    transform: translateX(8px);
+}
+
+/* Light theme sidebar icon */
+body.light .sidebar-icon {
+    filter: brightness(0) invert(0);
 }
 
 .sidebar-content {
@@ -495,4 +507,154 @@ input:checked + .slider:before {
 
 .container {
     margin-right: 300px;
+}
+
+.donate {
+    background-color: #383838;
+    border-radius: 25px;
+    color: white;
+    font-family: "Rubik", sans-serif;
+    padding: 14px 25px;
+    transition: 0.8s ease;
+    cursor: pointer;
+    display: inline-block;
+    position: fixed;
+    bottom: 55px;
+    left: 40px;
+    z-index: 1001;
+    font-size: 25px;
+}
+.donate:hover {
+    transform: scale(1.06);
+}
+
+/* Popup overlay */
+.popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+
+    /* Start hidden */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+/* Show popup when checkbox is checked */
+#kofi-toggle:checked ~ .popup {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Popup content animation */
+.popup-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 420px;
+    width: 90%;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    z-index: 10000;
+
+    /* Slide + fade setup */
+    transform: translateY(40px);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+/* Animate in when checked */
+#kofi-toggle:checked ~ .popup .popup-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+/* Close button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    color: #333;
+    cursor: pointer;
+    font-weight: bold;
+}
+.close-btn:hover {
+    color: red;
+}
+
+/* Mobile Responsive Styles */
+/* Extra small devices (phones) */
+@media screen and (max-width: 480px) {
+    .guest textarea {
+        width: 200%;
+    }
+    
+    .nav {
+        font-size: 8px;
+        margin-right: 15px;
+    }
+    
+    .login {
+        right: 10px;
+        font-size: 60%;
+    }
+    
+    .container {
+        width: calc(100% - 20px);
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    
+    .centered {
+        width: calc(100% - 60px);
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    
+    textarea {
+        width: 95%;
+        font-size: 14px;
+        align-items: center;
+    }
+    
+    .chat {
+        font-size: 16px;
+        padding: 12px 12px;
+        max-width: 90%;
+    }
+    
+    .donate {
+        bottom: 20px;
+        left: 15px;
+        font-size: 18px;
+        padding: 8px 16px;
+        scale: calc(100% - 5%);
+    }
+
+    #warning {
+        display: flex;
+        font-size: 14px;
+        margin-left: 120px;
+        text-align: center;
+    }
+
+    .sidebar {
+        width: 10%;
+    }
+
+    .sidebar .switch {
+        scale: calc(100% - 40%);
+    }
+
+    button.logout-btn {
+        padding-right: 6px;
+    }
+
+    div#chatWindow {
+        padding-left: 20px;
+    }
 }

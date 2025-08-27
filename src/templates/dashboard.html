@@ -8,20 +8,37 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 <title>Neurochat</title>
 </head>
-<body>
+<body class="dashboard-page">
 
 <div class="nav">
         <h1>Neurochat</h1>
 </div>
 
+    <label for="kofi-toggle" class="donate">Support Us!</label>
+        <input type="checkbox" id="kofi-toggle" hidden>
+        <!-- Popup modal -->
+        <div class="popup">
+            <div class="popup-content">
+            <!-- Close button -->
+            <label for="kofi-toggle" class="close-btn">&times;</label>
+            <!-- Ko-fi iframe -->
+            <iframe id="kofiframe" 
+            src="https://ko-fi.com/neurochat/?hidefeed=true&widget=true&embed=true&preview=true"
+            style="border:none;width:100%;background:#f9f9f9;" 
+            height="580" title="neurochat">
+            </iframe>
+            </div>
+        </div>
+
 <!-- Right Sidebar -->
 <div class="sidebar">
     <div class="sidebar-header">
-        <!-- <img src="{{ url_for('static', filename='wink-smile.png') }}" alt="Wink Smile" class="sidebar-icon"> -->
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Wink Smile" class="sidebar-icon">
     </div>
     
     <div class="sidebar-content">
