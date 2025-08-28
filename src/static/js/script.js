@@ -349,6 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle Enter key in textarea (only if messageInput exists)
     const messageInput = document.getElementById('messageInput');
     if (messageInput) {
+        // Multiple event listeners for cross-browser compatibility
         messageInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -356,10 +357,40 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Safari mobile compatibility - keypress event
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Additional mobile compatibility - keyup event
+        messageInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Touch events for mobile devices
+        messageInput.addEventListener('touchend', function(e) {
+            // Focus the textarea when touched (helps with mobile keyboard)
+            this.focus();
+        });
+
         // Handle textarea auto-resize
         messageInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Ensure textarea is focused and ready for mobile input
+        messageInput.addEventListener('focus', function() {
+            // Scroll to bottom to ensure textarea is visible on mobile
+            setTimeout(() => {
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         });
     }
 });
