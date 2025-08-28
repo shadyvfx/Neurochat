@@ -233,6 +233,20 @@ textarea {
     box-sizing: border-box;
     padding-top: 24px;
     padding-left: 12px;
+    /* Ensure textarea is fully clickable on all devices */
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    /* Mobile touch improvements */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    /* Prevent zoom on mobile */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 textarea::placeholder {
@@ -663,6 +677,21 @@ input:checked + .slider:before {
         width: 95%;
         font-size: 14px;
         align-items: center;
+            /* Mobile textarea improvements */
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    /* Ensure textarea is fully clickable on mobile */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    /* Prevent zoom on mobile */
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     }
     
     .chat {
