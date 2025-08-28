@@ -80,6 +80,34 @@
         // Add message to chat that time has expired
         addMessage('ai', "⏰ Your 15-minute guest session has expired. Please create a free account to continue chatting with Neurochat!");
     }
+
+    // Keep server alive - ping every 5 minutes
+    setInterval(() => {
+        fetch('/')
+            .then(response => {
+                if (response.ok) {
+                    console.log('Server kept alive -', new Date().toLocaleTimeString());
+                }
+            })
+            .catch(err => {
+                console.log('Keep-alive ping failed -', new Date().toLocaleTimeString());
+            });
+    }, 300000); // 5 minutes = 300,000 milliseconds
+
+    // Also ping when page becomes visible (user returns to tab)
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            fetch('/')
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Server pinged on tab return -', new Date().toLocaleTimeString());
+                    }
+                })
+                .catch(err => {
+                    console.log('Tab return ping failed -', new Date().toLocaleTimeString());
+                });
+        }
+    });
     </script>
 </div>
     </body>
