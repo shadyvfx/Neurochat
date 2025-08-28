@@ -16,12 +16,12 @@
 <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
 <title>Neurochat</title>
 </head>
-<body class="dashboard-page">
+<body>
 
 <div class="nav">
         <h1>Neurochat</h1>
 </div>
-
+<div class="dash">
     <label for="kofi-toggle" class="donate">Support Us!</label>
         <input type="checkbox" id="kofi-toggle" hidden>
         <!-- Popup modal -->
@@ -87,6 +87,6 @@
 
 <!-- Load dashboard-specific JavaScript -->
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-
+</div>
 </body>
 </html>

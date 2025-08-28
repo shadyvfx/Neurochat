@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo.png') }}">
 <title>Neurochat</title>
 </head>
-<body class="guest">
+<body>
     <div class="nav">
             <h1>Neurochat</h1>
         <div class="login">
@@ -24,7 +24,7 @@
             <h1 id="signup"><a href="javascript:void(0);" onclick="openPopup('{{ url_for('auth.signup') }}')">Register</a></h1>
         </div>
     </div>
-
+<div class="guest">
     <label for="kofi-toggle" class="donate">Support Us!</label>
         <input type="checkbox" id="kofi-toggle" hidden>
         <!-- Popup modal -->
@@ -81,6 +81,6 @@
         addMessage('ai', "⏰ Your 15-minute guest session has expired. Please create a free account to continue chatting with Neurochat!");
     }
     </script>
-    
+</div>
     </body>
 </html>

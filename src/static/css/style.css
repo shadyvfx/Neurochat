@@ -589,10 +589,54 @@ input:checked + .slider:before {
 /* Mobile Responsive Styles */
 /* Extra small devices (phones) */
 @media screen and (max-width: 480px) {
-    .guest textarea {
-        width: 200%;
+    .guest .window{
+        position: absolute;
+        left: 45px;
     }
     
+    .guest textarea {
+        width: calc(100% + 10%);
+    }
+
+    .guest .centered {
+        padding-left: 13px;
+    }
+
+    .guest #warning {
+        position: relative;
+        left: 10px;
+    }
+
+    .guest .donate {
+        position: absolute;
+        left: 24px;
+    }
+
+    .dash textarea {
+        right: 80px;
+    }
+
+    .dash .logout-btn {
+        padding-right: 20px;
+        position: relative;
+        right: 18px;
+    }
+
+    .dash .centered {
+        position: absolute;
+        left: -2px;
+    }
+
+    .dash .donate {
+        position: absolute;
+        left: 8px;
+    }
+
+    .dash #warning {
+        position: relative;
+        left: 6px;
+    }
+
     .nav {
         font-size: 8px;
         margin-right: 15px;
@@ -648,10 +692,6 @@ input:checked + .slider:before {
 
     .sidebar .switch {
         scale: calc(100% - 40%);
-    }
-
-    button.logout-btn {
-        padding-right: 6px;
     }
 
     div#chatWindow {
